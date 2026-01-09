@@ -1,5 +1,6 @@
 import streamlit as st
 import nltk
+import json
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
@@ -12,19 +13,19 @@ from nltk.classify import NaiveBayesClassifier
 @st.cache_resource
 def download_nltk():
     nltk.download("punkt")
-    nltk.download("punkt_tab")                     # tokenizer (new)
+    nltk.download("punkt_tab")
     nltk.download("stopwords")
     nltk.download("wordnet")
     nltk.download("averaged_perceptron_tagger")
-    nltk.download("averaged_perceptron_tagger_eng")# POS tagger (new)
+    nltk.download("averaged_perceptron_tagger_eng")
     nltk.download("maxent_ne_chunker")
-    nltk.download("maxent_ne_chunker_tab")          # 🔥 FINAL FIX (NER)
+    nltk.download("maxent_ne_chunker_tab")
     nltk.download("words")
 
 download_nltk()
 
 # ============================
-# PAGE CONFIG (UNCHANGED)
+# PAGE CONFIG
 # ============================
 st.set_page_config(
     page_title="AI Text Intelligence",
@@ -33,7 +34,7 @@ st.set_page_config(
 )
 
 # ============================
-# PREMIUM UI STYLE (UNCHANGED)
+# UI STYLE (UNCHANGED)
 # ============================
 st.markdown("""
 <style>
@@ -87,7 +88,13 @@ def extract_entities(text):
     return entities
 
 # ============================
-# UI (UNCHANGED)
+# SESSION STATE (HISTORY)
+# ============================
+if "history" not in st.session_state:
+    st.session_state.history = []
+
+# ============================
+# UI
 # ============================
 st.title("🧠 AI Text Intelligence Dashboard")
 st.caption("Sentiment • Keywords • Named Entities | Built with NLTK")
@@ -106,18 +113,34 @@ if st.button("🚀 Analyze Text", use_container_width=True):
     else:
         with st.spinner("Analyzing text..."):
             features = text_to_features(user_text)
-            sentiment = classifier.classify(features)
+
+            # Sentiment + confidence
+            prob_dist = classifier.prob_classify(features)
+            sentiment = prob_dist.max()
+            confidence = round(prob_dist.prob(sentiment) * 100, 2)
+
             entities = extract_entities(user_text)
+            keywords = list(features.keys())
+
+        # Save history
+        result = {
+            "text": user_text,
+            "sentiment": sentiment,
+            "confidence": confidence,
+            "keywords": keywords,
+            "entities": entities
+        }
+        st.session_state.history.append(result)
 
         col1, col2 = st.columns(2)
 
         with col1:
             st.subheader("📊 Sentiment")
-            st.success("Positive" if sentiment == "positive" else "Negative")
+            st.success(f"{sentiment.capitalize()} ({confidence}%)")
 
         with col2:
             st.subheader("🔑 Keywords")
-            st.write(list(features.keys()))
+            st.write(keywords)
 
         st.subheader("🏷️ Named Entities")
         if entities:
@@ -125,6 +148,30 @@ if st.button("🚀 Analyze Text", use_container_width=True):
                 st.write(f"**{label}** → {value}")
         else:
             st.info("No named entities found")
+
+        # ============================
+        # DOWNLOAD REPORT (JSON)
+        # ============================
+        st.download_button(
+            label="📥 Download Analysis Report (JSON)",
+            data=json.dumps(result, indent=2),
+            file_name="text_analysis_report.json",
+            mime="application/json"
+        )
+
+# ============================
+# HISTORY & COMPARISON
+# ============================
+if st.session_state.history:
+    st.divider()
+    st.subheader("🕘 Analysis History")
+
+    for i, item in enumerate(reversed(st.session_state.history[-5:]), 1):
+        st.markdown(f"""
+**#{i} Text:** {item['text']}  
+- Sentiment: **{item['sentiment']} ({item['confidence']}%)**  
+- Keywords: `{", ".join(item['keywords'])}`
+""")
 
 st.divider()
 st.caption("Portfolio Project • NLP Foundations • Streamlit Cloud Ready")
