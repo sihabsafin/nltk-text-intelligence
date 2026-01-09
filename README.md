@@ -112,7 +112,7 @@ Machine Learning & NLP Enthusiast
 ## 🚀 How to Run Locally
 
 > ### 🔹 Step 1: Clone the Repository
-
+```bash
 git clone https://github.com/sihabsafin/nltk-text-intelligence.git
 cd nltk-text-intelligence
 
