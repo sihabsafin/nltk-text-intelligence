@@ -77,32 +77,6 @@ This project focuses on:
 - Named Entity Recognition  
 
 ---
-
-## 🚀 How to Run Locally
-
-### 1️⃣ Clone the Repository
-```bash
-git clone https://github.com/sihabsafin/nltk-text-intelligence.git
-cd nltk-text-intelligence
-
-## 🚀 Getting Started (Run Locally)
-
-### 2️⃣ Install Dependencies
-```bash
-pip install -r requirements.txt
-
-### 3️⃣ Run the Application
-streamlit run app.py
-
-
-###  📂 Project Structure
-nltk-text-intelligence/
-│
-├── app.py              # Main Streamlit application
-├── requirements.txt    # Project dependencies
-├── README.md           # Project documentation
-
-
 ## 📈 Why This Project Matters
 
 This project demonstrates:
@@ -134,4 +108,37 @@ Machine Learning & NLP Enthusiast
 
 🔗 **GitHub:** https://github.com/sihabsafin/nltk-text-intelligence/
 🌐 **Live App:** https://sihabsafin-nltk-text-intelligence.streamlit.app/
+
+## 🚀 How to Run Locally
+
+> ### 🔹 Step 1: Clone the Repository
+```bash
+git clone https://github.com/sihabsafin/nltk-text-intelligence.git
+cd nltk-text-intelligence
+🔹 Step 2: Install Dependencies
+pip install -r requirements.txt
+
+🔹 Step 3: Run the Application
+streamlit run app.py
+
+📂 Project Structure
+nltk-text-intelligence/
+│
+├── app.py              # Main Streamlit application
+├── requirements.txt    # Project dependencies
+├── README.md           # Project documentation
+
+
+---
+
+### ✅ Result on GitHub
+- Each step title appears **highlighted in a block**
+- Clean, readable, **no broken formatting**
+- Looks **professional and premium**
+
+If you want the blocks to look **even more card-like**, I can give an **HTML-based version** (still GitHub-safe).
+
+
+
+
 
