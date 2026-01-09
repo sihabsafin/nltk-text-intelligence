@@ -112,17 +112,17 @@ Machine Learning & NLP Enthusiast
 ## 🚀 How to Run Locally
 
 > ### 🔹 Step 1: Clone the Repository
-```bash
+
 git clone https://github.com/sihabsafin/nltk-text-intelligence.git
 cd nltk-text-intelligence
 
 ---------------------
 > ###  🔹 Step 2: Install Dependencies
-```bash
+
 pip install -r requirements.txt
 ---------------------
 > ###  🔹 Step 3: Run the Application
-```bash
+
 streamlit run app.py
 ---------------------
 > ###  🔹 Step 4: 📂 Project Structure
