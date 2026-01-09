@@ -1,6 +1,11 @@
 import streamlit as st
 import nltk
 import json
+import re
+from io import BytesIO
+from reportlab.platypus import SimpleDocTemplate, Paragraph
+from reportlab.lib.styles import getSampleStyleSheet
+
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
@@ -41,6 +46,11 @@ st.markdown("""
 body { background-color: #0e1117; }
 .block-container { padding-top: 2rem; }
 h1, h2, h3 { color: #ffffff; }
+mark {
+    background-color: #ffcc00;
+    padding: 2px 4px;
+    border-radius: 4px;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -88,7 +98,52 @@ def extract_entities(text):
     return entities
 
 # ============================
-# SESSION STATE (HISTORY)
+# PDF REPORT GENERATOR
+# ============================
+def generate_pdf(report_data):
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer)
+    styles = getSampleStyleSheet()
+    content = []
+
+    content.append(Paragraph("<b>AI Text Intelligence Report</b>", styles["Title"]))
+    content.append(Paragraph(f"<b>Text:</b> {report_data['text']}", styles["Normal"]))
+    content.append(Paragraph(
+        f"<b>Sentiment:</b> {report_data['sentiment']} ({report_data['confidence']}%)",
+        styles["Normal"]
+    ))
+    content.append(Paragraph(
+        f"<b>Keywords:</b> {', '.join(report_data['keywords'])}",
+        styles["Normal"]
+    ))
+
+    if report_data["entities"]:
+        ent_text = "; ".join([f"{e[0]}: {e[1]}" for e in report_data["entities"]])
+    else:
+        ent_text = "No named entities found"
+
+    content.append(Paragraph(f"<b>Named Entities:</b> {ent_text}", styles["Normal"]))
+
+    doc.build(content)
+    buffer.seek(0)
+    return buffer
+
+# ============================
+# KEYWORD HIGHLIGHTER
+# ============================
+def highlight_keywords(text, keywords):
+    highlighted = text
+    for word in set(keywords):
+        highlighted = re.sub(
+            rf"\b({re.escape(word)})\b",
+            r"<mark>\1</mark>",
+            highlighted,
+            flags=re.IGNORECASE
+        )
+    return highlighted
+
+# ============================
+# SESSION STATE
 # ============================
 if "history" not in st.session_state:
     st.session_state.history = []
@@ -114,7 +169,6 @@ if st.button("🚀 Analyze Text", use_container_width=True):
         with st.spinner("Analyzing text..."):
             features = text_to_features(user_text)
 
-            # Sentiment + confidence
             prob_dist = classifier.prob_classify(features)
             sentiment = prob_dist.max()
             confidence = round(prob_dist.prob(sentiment) * 100, 2)
@@ -122,7 +176,6 @@ if st.button("🚀 Analyze Text", use_container_width=True):
             entities = extract_entities(user_text)
             keywords = list(features.keys())
 
-        # Save history
         result = {
             "text": user_text,
             "sentiment": sentiment,
@@ -142,6 +195,12 @@ if st.button("🚀 Analyze Text", use_container_width=True):
             st.subheader("🔑 Keywords")
             st.write(keywords)
 
+        st.subheader("🖍️ Highlighted Text")
+        st.markdown(
+            highlight_keywords(user_text, keywords),
+            unsafe_allow_html=True
+        )
+
         st.subheader("🏷️ Named Entities")
         if entities:
             for label, value in entities:
@@ -149,18 +208,24 @@ if st.button("🚀 Analyze Text", use_container_width=True):
         else:
             st.info("No named entities found")
 
-        # ============================
-        # DOWNLOAD REPORT (JSON)
-        # ============================
+        # DOWNLOADS
         st.download_button(
-            label="📥 Download Analysis Report (JSON)",
-            data=json.dumps(result, indent=2),
-            file_name="text_analysis_report.json",
-            mime="application/json"
+            "📥 Download Report (JSON)",
+            json.dumps(result, indent=2),
+            "text_analysis_report.json",
+            "application/json"
+        )
+
+        pdf_file = generate_pdf(result)
+        st.download_button(
+            "📄 Download Report (PDF)",
+            pdf_file,
+            "text_analysis_report.pdf",
+            "application/pdf"
         )
 
 # ============================
-# HISTORY & COMPARISON
+# HISTORY
 # ============================
 if st.session_state.history:
     st.divider()
