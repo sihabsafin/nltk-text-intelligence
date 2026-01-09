@@ -12,12 +12,13 @@ from nltk.classify import NaiveBayesClassifier
 @st.cache_resource
 def download_nltk():
     nltk.download("punkt")
-    nltk.download("punkt_tab")  # required for Python 3.13
+    nltk.download("punkt_tab")                     # tokenizer (new)
     nltk.download("stopwords")
     nltk.download("wordnet")
     nltk.download("averaged_perceptron_tagger")
-    nltk.download("averaged_perceptron_tagger_eng")  # 🔥 REQUIRED (FIX)
+    nltk.download("averaged_perceptron_tagger_eng")# POS tagger (new)
     nltk.download("maxent_ne_chunker")
+    nltk.download("maxent_ne_chunker_tab")          # 🔥 FINAL FIX (NER)
     nltk.download("words")
 
 download_nltk()
