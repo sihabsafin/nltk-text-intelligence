@@ -115,13 +115,18 @@ Machine Learning & NLP Enthusiast
 ```bash
 git clone https://github.com/sihabsafin/nltk-text-intelligence.git
 cd nltk-text-intelligence
-🔹 Step 2: Install Dependencies
+
+---------------------
+> ###  🔹 Step 2: Install Dependencies
+```bash
 pip install -r requirements.txt
-
-🔹 Step 3: Run the Application
+---------------------
+> ###  🔹 Step 3: Run the Application
+```bash
 streamlit run app.py
+---------------------
+> ###  🔹 Step 4: 📂 Project Structure
 
-📂 Project Structure
 nltk-text-intelligence/
 │
 ├── app.py              # Main Streamlit application
@@ -131,12 +136,7 @@ nltk-text-intelligence/
 
 ---
 
-### ✅ Result on GitHub
-- Each step title appears **highlighted in a block**
-- Clean, readable, **no broken formatting**
-- Looks **professional and premium**
 
-If you want the blocks to look **even more card-like**, I can give an **HTML-based version** (still GitHub-safe).
 
 
 
