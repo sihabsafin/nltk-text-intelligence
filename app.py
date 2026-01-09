@@ -12,17 +12,18 @@ from nltk.classify import NaiveBayesClassifier
 @st.cache_resource
 def download_nltk():
     nltk.download("punkt")
-    nltk.download("punkt_tab")   # 🔥 REQUIRED (NEW)
+    nltk.download("punkt_tab")  # required for Python 3.13
     nltk.download("stopwords")
     nltk.download("wordnet")
     nltk.download("averaged_perceptron_tagger")
+    nltk.download("averaged_perceptron_tagger_eng")  # 🔥 REQUIRED (FIX)
     nltk.download("maxent_ne_chunker")
     nltk.download("words")
 
 download_nltk()
 
 # ============================
-# PAGE CONFIG (MODERN)
+# PAGE CONFIG (UNCHANGED)
 # ============================
 st.set_page_config(
     page_title="AI Text Intelligence",
@@ -31,7 +32,7 @@ st.set_page_config(
 )
 
 # ============================
-# PREMIUM UI STYLE
+# PREMIUM UI STYLE (UNCHANGED)
 # ============================
 st.markdown("""
 <style>
@@ -85,7 +86,7 @@ def extract_entities(text):
     return entities
 
 # ============================
-# UI
+# UI (UNCHANGED)
 # ============================
 st.title("🧠 AI Text Intelligence Dashboard")
 st.caption("Sentiment • Keywords • Named Entities | Built with NLTK")
